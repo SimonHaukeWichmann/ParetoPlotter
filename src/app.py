@@ -74,7 +74,7 @@ fig.update_layout(showlegend=False, paper_bgcolor='white',
 
 navbar = dbc.Navbar(
     [
-        html.P('ParetoPlotter 3.0', className="navbar-brand mx-auto",
+        html.P('ParetoPlotter 3.0, created by Simon Wichmann', className="navbar-brand mx-auto",
                style={"color": "black"}),
     ],
     dark=True,
