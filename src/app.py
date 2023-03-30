@@ -69,7 +69,7 @@ Z2 = func2(X, Y)
 # Create the contour plot with both functions
 fig = go.Figure()
 fig.update_layout(showlegend=False, paper_bgcolor='white',
-                  margin=dict(l=10, r=10, t=10, b=10), height=598,)
+                  margin=dict(l=10, r=10, t=10, b=10), height=555,)
 
 
 navbar = dbc.Navbar(
@@ -79,6 +79,47 @@ navbar = dbc.Navbar(
     ],
     dark=True,
     color='#E8E8E8',
+)
+
+
+offcanvas = html.Div(
+    [
+        dbc.Offcanvas(
+            children=[
+                html.H6('ParetoPlotter 3.0'),
+                html.P(
+                    "This app was created to visualize the Pareto Front for a multi-objective optimization with two 2d objective functions."
+                ),
+                html.P(
+                    "You can create your own functions in the top left corner and set the x and y ranges."
+                ),
+                html.H6('Click Away'),
+                html.P(
+                    "After that you can click on the graph on the left (or on the 3d version under the tab '3D View') and see the evaluation of the two functions plottet on the right."
+                ),
+                html.P(
+                    "You can then see the Pareto Front plotted within the graph and you can try to make sense of it. Also, you can try to 'refine' it by adding more points that fit the Pareto criteria."
+                ),
+                html.H6('Download Data Table'),
+                html.P(
+                    "Under the tab 'Data Table' you can view the exact numbers on the points you clicked on (numerical errors may occur) and download them for further analysis."
+                ),
+                html.P(
+                    "By the way, you can also download the plots if you click on the camera icon within the plot itself."
+                ),
+                html.P(
+                    "If you want to learn more about the Pareto Front, check out the Wikipedia article page below:"
+                ),
+                dcc.Link(
+                    href="https://en.wikipedia.org/wiki/Pareto_front"
+                ),
+
+            ],
+            id="offcanvas",
+            title="Info",
+            is_open=False,
+        ),
+    ]
 )
 
 function_section = html.Div([
@@ -122,6 +163,18 @@ function_section = html.Div([
         ], width=8),
         dbc.Col([
             dbc.Button('Plot', id='plot_function_2', style={'width': '100%'})
+        ], width=2)
+    ], style={'marginTop': '5px'}),
+    dbc.Row([
+        # dbc.Col([
+
+        # ], width=2),
+        dbc.Col([
+
+        ], width=10),
+        dbc.Col([
+            dbc.Button('Info', id='info_button', color='secondary',
+                       style={'width': '100%'})
         ], width=2)
     ], style={'marginTop': '5px'}),
 ])
@@ -174,6 +227,7 @@ row = dbc.Row([
 app.layout = html.Div([
     navbar,
     row,
+    offcanvas,
 ], style={'backgroundColor': '#E8E8E8'})
 
 
@@ -299,7 +353,7 @@ def plot_points(clickData_1, clickData_2, active_tab, function_1_str, function_2
     # Create figure object
     fig_5 = go.Figure(data=[scatter])
     fig_5.update_layout(showlegend=False, paper_bgcolor='white',
-                        margin=dict(l=10, r=10, t=10, b=10), height=598,)
+                        margin=dict(l=10, r=10, t=10, b=10), height=555,)
 
     if len(df) > 1:
         pareto_front_calc()
@@ -330,6 +384,17 @@ def plot_points(clickData_1, clickData_2, active_tab, function_1_str, function_2
 )
 def save_as_csv(n_clicks):
     return dcc.send_data_frame(df.to_csv, 'pareto_set_download.csv')
+
+
+@app.callback(
+    Output("offcanvas", "is_open"),
+    Input("info_button", "n_clicks"),
+    [State("offcanvas", "is_open")],
+)
+def toggle_offcanvas(n1, is_open):
+    if n1:
+        return not is_open
+    return is_open
 
 
 if __name__ == '__main__':
